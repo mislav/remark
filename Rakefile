@@ -8,8 +8,8 @@ task :gemspec do
     gem.authors = ["Mislav Marohnić"]
     gem.has_rdoc = false
     
-    gem.version = '0.1.0'
-    gem.files = FileList['Rakefile', '{bin,lib,rails,spec}/**/*', 'README*', 'LICENSE*']
+    gem.version = '0.2.0'
+    gem.files = FileList['Rakefile', '{bin,lib,rails,spec}/**/*', 'README*', 'LICENSE*'] & `git ls-files`.split("\n")
     gem.executables = Dir['bin/*'].map { |f| File.basename(f) }
   end
   
