@@ -6,7 +6,20 @@ class Remark
   end
   
   def to_markdown
-    remark_children(@doc).join("\n\n")
+    remark_children(scope).join("\n\n")
+  end
+  
+  def scope
+    if body = @doc.at('/html/body')
+      candidates = (body / 'p').inject(Hash.new(0)) do |memo, para|
+        memo[para.parent] += 1
+        memo
+      end.invert
+      
+      candidates[candidates.keys.max]
+    else
+      @doc
+    end
   end
   
   IGNORE = %w(script head style)
