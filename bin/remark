@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'remark'
+
+puts Remark.new(ARGF.read).to_markdown
