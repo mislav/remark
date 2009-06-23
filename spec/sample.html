@@ -1,1 +1,40 @@
-<p>Foo</p><p>Bar</p>
+<h1>Remark &mdash; HTML to Markdown converter</h1>
+
+<p>This is a sample document which will get updated as Remark understands more HTML.
+It reflects what's currently supported.</p>
+
+<p class="nice">Known block elements are left intact if they have attributes.
+Markdown doesn't have a syntax for them.</p>
+
+<table>
+  <tr>
+    <td>Elements that can't be represented in Markdown are left intact.</td>
+  </tr>
+</table>
+
+<p>SCRIPT and HEAD tags are swallowed, as browsers don't render them as content.</p>
+
+<script type="text/javascript">
+  alert("I will not survive")
+</script>
+
+<h2>TODO</h2>
+
+<p>Remark should support Markdown syntax for <em>inline</em> markup.
+<a href="http://github.com/mislav">Hyperlinks</a> and <code>code spans</code> are a must.</p>
+
+<ul>
+  <li>List items too;</li>
+  <li>ordered or unordered.</li>
+</ul>
+
+<p>Remark should probably support BR elements in paragraphs,<br>
+although people tend to abuse them.</p>
+
+<pre><code>And who would forget
+Preformatted code blocks :)</code></pre>
+
+<div class="content">
+  <p>What to do with pieces of content inside wrapper elements,
+  like DIV, is still undecided.</p>
+</div>
