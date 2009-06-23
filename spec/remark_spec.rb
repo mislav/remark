@@ -81,5 +81,10 @@ describe Remark do
     remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
       "Click [here](http://mislav.uniqpath.com)"
   end
+  
+  it "should support blockquotes" do
+    remark("<blockquote>Cogito, ergo sum</blockquote>").should == '> Cogito, ergo sum'
+    remark("<blockquote><p>I think</p><p>therefore I am</p></blockquote>").should == "> I think\n> \n> therefore I am"
+  end
 end
 

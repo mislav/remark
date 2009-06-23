@@ -57,6 +57,8 @@ class Remark
     when 'a'
       href = elem.attributes['href']
       "[#{elem.inner_html}](#{href})"
+    when 'blockquote'
+      remark_children(elem).join("\n\n").gsub(/^/, '> ')
     else
       elem
     end
