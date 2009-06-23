@@ -42,8 +42,26 @@ class Remark
       elem.inner_text
     when /^h([1-6])$/
       ('#' * $1.to_i) + ' ' + elem.inner_text
+    when 'ul', 'ol'
+      remark_list(elem)
+    when 'li'
+      elem.inner_text
+    when 'pre'
+      elem.inner_text.gsub(/^/, ' '*4)
     else
       elem
     end
+  end
+  
+  def remark_list(list)
+    unordered = list.name == 'ul'
+    marker = unordered ? '*' : 0
+    remark_children(list).map do |item|
+      if unordered
+        marker + ' ' + item
+      else
+        (marker += 1).to_s + '. ' + item
+      end
+    end.join("\n")
   end
 end

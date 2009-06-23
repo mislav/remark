@@ -42,4 +42,25 @@ describe Remark do
       <p>Bar</p>
     HTML
   end
+  
+  it "should support lists" do
+    remark(<<-HTML).should == "* foo\n* bar"
+      <ul>
+        <li>foo</li>
+        <li>bar</li>
+      </ul>
+    HTML
+    
+    remark(<<-HTML).should == "1. foo\n2. bar"
+      <ol>
+        <li>foo</li>
+        <li>bar</li>
+      </ol>
+    HTML
+  end
+  
+  it "should support preformatted blocks" do
+    remark("<pre>def foo\n  bar\nend</pre>").should == "    def foo\n      bar\n    end"
+    remark("<pre><code>def foo\n  bar\nend</code></pre>").should == "    def foo\n      bar\n    end"
+  end
 end
