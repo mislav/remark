@@ -92,5 +92,10 @@ describe Remark do
     remark("<img src='moo.jpg' alt='cow'>").should == '![cow](moo.jpg)'
     remark("<img src='moo.jpg' alt='cow' width='16'>").should == '<img src="moo.jpg" alt="cow" width="16" />'
   end
+  
+  it "should not have BR ruin all the fun" do
+    remark("<p>Foo<br>bar</p>").should == 'Foo bar'
+    remark("<p>Foo<br>\nbar <code>baz</code></p>").should == 'Foo bar `baz`'
+  end
 end
 

@@ -35,7 +35,7 @@ class Remark
   
   def remark_item(item)
     if item.text?
-      item.to_s.gsub(/\n+/, ' ') unless item.to_s =~ /^\s*$/
+      item.to_s.gsub(/\n+/, ' ') unless item.to_s =~ /\A\s*\Z/
     elsif item.elem?
       if IGNORE.include?(item.name)
         nil
@@ -71,6 +71,8 @@ class Remark
       '!' + remark_link(elem.attributes['alt'], elem.attributes['src'], elem.attributes['title'])
     when 'blockquote'
       remark_children(elem).join("\n\n").gsub(/^/, '> ')
+    when 'br'
+      ' ' + elem.inner_html
     else
       elem
     end
@@ -82,7 +84,7 @@ class Remark
   end
   
   def remark_inline(elem)
-    remark_children(elem).join('')
+    remark_children(elem).join('').gsub(/\s{2,}/, ' ')
   end
   
   def remark_list(list)
