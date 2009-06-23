@@ -21,6 +21,11 @@ describe Remark do
     remark("<h2>Foo bar</h2>").should == '## Foo bar'
   end
   
+  it "should preserve elements in remarked blocks" do
+    remark("<p>Foo <ins>bar</ins></p>").should == 'Foo <ins>bar</ins>'
+    remark("<h2>Foo <ins>bar</ins></h2>").should == '## Foo <ins>bar</ins>'
+  end
+  
   it "should unescape HTML entities" do
     remark("Foo&amp;bar").should == 'Foo&bar'
     remark("<p>If you&#8217;re doing all your development on the &#8220;master&#8221; branch, you&#8217;re not using git").should == "If you’re doing all your development on the “master” branch, you’re not using git"
@@ -61,6 +66,20 @@ describe Remark do
   
   it "should support preformatted blocks" do
     remark("<pre>def foo\n  bar\nend</pre>").should == "    def foo\n      bar\n    end"
-    remark("<pre><code>def foo\n  bar\nend</code></pre>").should == "    def foo\n      bar\n    end"
+    remark("<pre><code>def foo\n  &lt;bar&gt;\nend</code></pre>").should == "    def foo\n      <bar>\n    end"
+  end
+  
+  it "should remark inline elements" do
+    remark("<p>I'm so <strong>strong</strong></p>").should == "I'm so **strong**"
+    remark("<p>I'm so <em>emo</em></p>").should == "I'm so _emo_"
+    remark("<p>Write more <code>code</code></p>").should == "Write more `code`"
+    remark("<ul><li><em>Inline</em> stuff in <strong>lists</strong></li></ul>").should == "* _Inline_ stuff in **lists**"
+    remark("<h1>Headings <em>too</em></h1>").should == '# Headings _too_'
+  end
+  
+  it "should support hyperlinks" do
+    remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
+      "Click [here](http://mislav.uniqpath.com)"
   end
 end
+

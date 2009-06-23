@@ -28,7 +28,7 @@ class Remark
     elsif item.elem?
       if IGNORE.include?(item.name)
         nil
-      elsif item.attributes.empty?
+      elsif item.attributes.empty? or (item.name == 'a' and item.attributes.keys == ['href'])
         remark_element(item)
       else
         item
@@ -39,18 +39,31 @@ class Remark
   def remark_element(elem)
     case elem.name
     when 'p'
-      elem.inner_text
+      remark_inline(elem)
     when /^h([1-6])$/
-      ('#' * $1.to_i) + ' ' + elem.inner_text
+      ('#' * $1.to_i) + ' ' + remark_inline(elem)
     when 'ul', 'ol'
       remark_list(elem)
     when 'li'
-      elem.inner_text
+      remark_inline(elem)
     when 'pre'
       elem.inner_text.gsub(/^/, ' '*4)
+    when 'em'
+      "_#{elem.inner_text}_"
+    when 'strong'
+      "**#{elem.inner_text}**"
+    when 'code'
+      "`#{elem.inner_text}`"
+    when 'a'
+      href = elem.attributes['href']
+      "[#{elem.inner_html}](#{href})"
     else
       elem
     end
+  end
+  
+  def remark_inline(elem)
+    remark_children(elem).join('')
   end
   
   def remark_list(list)
