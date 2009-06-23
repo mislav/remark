@@ -80,11 +80,17 @@ describe Remark do
   it "should support hyperlinks" do
     remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
       "Click [here](http://mislav.uniqpath.com)"
+    remark("<a href='/foo' title='bar'>baz</a>").should == '[baz](/foo "bar")'
   end
   
   it "should support blockquotes" do
     remark("<blockquote>Cogito, ergo sum</blockquote>").should == '> Cogito, ergo sum'
     remark("<blockquote><p>I think</p><p>therefore I am</p></blockquote>").should == "> I think\n> \n> therefore I am"
+  end
+  
+  it "should support image tags" do
+    remark("<img src='moo.jpg' alt='cow'>").should == '![cow](moo.jpg)'
+    remark("<img src='moo.jpg' alt='cow' width='16'>").should == '<img src="moo.jpg" alt="cow" width="16" />'
   end
 end
 

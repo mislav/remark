@@ -13,6 +13,17 @@ class Remark
   
   private
   
+  def valid_attributes?(elem)
+    case elem.name
+    when 'a'
+      (elem.attributes.keys - %w(title)) == %w(href)
+    when 'img'
+      (elem.attributes.keys - %w(title)).sort == %w(alt src)
+    else
+      elem.attributes.empty?
+    end
+  end
+  
   def remark_children(node)
     remarked = []
     node.children.each do |item|
@@ -28,7 +39,7 @@ class Remark
     elsif item.elem?
       if IGNORE.include?(item.name)
         nil
-      elsif item.attributes.empty? or (item.name == 'a' and item.attributes.keys == ['href'])
+      elsif valid_attributes?(item)
         remark_element(item)
       else
         item
@@ -55,13 +66,19 @@ class Remark
     when 'code'
       "`#{elem.inner_text}`"
     when 'a'
-      href = elem.attributes['href']
-      "[#{elem.inner_html}](#{href})"
+      remark_link(elem.inner_html, elem.attributes['href'], elem.attributes['title'])
+    when 'img'
+      '!' + remark_link(elem.attributes['alt'], elem.attributes['src'], elem.attributes['title'])
     when 'blockquote'
       remark_children(elem).join("\n\n").gsub(/^/, '> ')
     else
       elem
     end
+  end
+  
+  def remark_link(text, href, title = nil)
+    title_markup = title ? %( "#{title}") : ''
+    "[#{text}](#{href}#{title_markup})"
   end
   
   def remark_inline(elem)
