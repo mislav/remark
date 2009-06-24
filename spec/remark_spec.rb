@@ -55,7 +55,10 @@ describe Remark do
         bar
       </p>
     HTML
-    
+  end
+  
+  it "should strip whitespace in text nodes between main content" do
+    pending
     remark(<<-HTML).should == "Foo\n\nbar\n\nBaz"
       <p>Foo</p>
         
@@ -77,6 +80,15 @@ describe Remark do
         <li>foo</li>
         <li>bar</li>
       </ol>
+    HTML
+  end
+  
+  it "should support lists with nested content" do
+    remark(<<-HTML).should == "*   foo\n    \n    bar\n\n*   baz"
+      <ul>
+        <li><p>foo</p><p>bar</p></li>
+        <li><p>baz</p></li>
+      </ul>
     HTML
   end
   

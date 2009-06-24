@@ -23,6 +23,7 @@ class Remark
   end
   
   IGNORE = %w(script head style)
+  BLOCK = %w(p blockquote h1 h2 h3 h4 h5 h6 pre)
   
   private
   
@@ -75,7 +76,8 @@ class Remark
     when 'ul', 'ol'
       remark_list(elem)
     when 'li'
-      remark_inline(elem)
+      elem.children.any? { |e| e.elem? and BLOCK.include?(e.name) } ?
+        remark_block(elem).indent : remark_inline(elem)
     when 'pre'
       elem.inner_text.indent
     when 'em'
@@ -110,13 +112,20 @@ class Remark
   def remark_list(list)
     unordered = list.name == 'ul'
     marker = unordered ? '*' : 0
-    remark_children(list).map do |item|
-      if unordered
-        marker + ' ' + item
+    nested = false
+    
+    items = remark_children(list).map do |item|
+      current = unordered ? marker : "#{marker += 1}."
+      if item =~ /\A\s/
+        nested = true
+        item[0, current.length] = current
+        item
       else
-        (marker += 1).to_s + '. ' + item
+        current + ' ' + item
       end
-    end.join("\n")
+    end
+    
+    items.join("\n" * (nested ? 2 : 1))
   end
 end
 
