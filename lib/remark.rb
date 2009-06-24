@@ -77,7 +77,8 @@ class Remark
     when 'strong'
       "**#{elem.inner_text}**"
     when 'code'
-      "`#{elem.inner_text}`"
+      code = elem.inner_text
+      code.index('`') ? "`` #{code} ``" : "`#{code}`"
     when 'a'
       remark_link(elem.inner_html, elem.attributes['href'], elem.attributes['title'])
     when 'img'

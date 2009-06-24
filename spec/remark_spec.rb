@@ -72,9 +72,14 @@ describe Remark do
   it "should remark inline elements" do
     remark("<p>I'm so <strong>strong</strong></p>").should == "I'm so **strong**"
     remark("<p>I'm so <em>emo</em></p>").should == "I'm so _emo_"
-    remark("<p>Write more <code>code</code></p>").should == "Write more `code`"
     remark("<ul><li><em>Inline</em> stuff in <strong>lists</strong></li></ul>").should == "* _Inline_ stuff in **lists**"
     remark("<h1>Headings <em>too</em></h1>").should == '# Headings _too_'
+  end
+  
+  it "should remark inline code" do
+    remark("<p>Write more <code>code</code></p>").should == "Write more `code`"
+    remark("<p>Even with <code>`backticks`</code></p>").should == "Even with `` `backticks` ``"
+    remark("<p>Or HTML <code>&lt;tags&gt;</code></p>").should == "Or HTML `<tags>`"
   end
   
   it "should support hyperlinks" do
