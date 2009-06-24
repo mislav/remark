@@ -6,7 +6,7 @@ class Remark
   end
   
   def to_markdown
-    remark_children(scope).join("\n\n")
+    remark_block(scope)
   end
   
   def scope
@@ -37,6 +37,12 @@ class Remark
     end
   end
   
+  def remark_block(elem)
+    remark_children(elem).
+      reject { |item| item.blank? }.
+      join("\n\n")
+  end
+  
   def remark_children(node)
     remarked = []
     node.children.each do |item|
@@ -48,7 +54,7 @@ class Remark
   
   def remark_item(item)
     if item.text?
-      item.to_s.gsub(/\n+/, ' ') unless item.to_s =~ /\A\s*\Z/
+      item.to_s.gsub(/\n+/, ' ') unless item.blank?
     elsif item.elem?
       if IGNORE.include?(item.name)
         nil
@@ -71,7 +77,7 @@ class Remark
     when 'li'
       remark_inline(elem)
     when 'pre'
-      elem.inner_text.gsub(/^/, ' '*4)
+      elem.inner_text.indent
     when 'em'
       "_#{elem.inner_text}_"
     when 'strong'
@@ -84,9 +90,9 @@ class Remark
     when 'img'
       '!' + remark_link(elem.attributes['alt'], elem.attributes['src'], elem.attributes['title'])
     when 'blockquote'
-      remark_children(elem).join("\n\n").gsub(/^/, '> ')
+      remark_children(elem).join("\n\n").indent('> ')
     when 'br'
-      ' ' + elem.inner_html
+      "  \n" + elem.inner_html
     else
       elem
     end
@@ -98,7 +104,7 @@ class Remark
   end
   
   def remark_inline(elem)
-    remark_children(elem).join('').gsub(/\s{2,}/, ' ')
+    remark_children(elem).join('').strip.gsub(/ {2,}(?!\n)/, ' ').gsub(/(\n) +/, '\1')
   end
   
   def remark_list(list)
@@ -112,4 +118,30 @@ class Remark
       end
     end.join("\n")
   end
+end
+
+Object.class_eval do
+  def blank?() false end
+end
+
+NilClass.class_eval do
+  def blank?() true end
+end
+
+String.class_eval do
+  def blank?
+    self.empty? or !!(self =~ /\A\s+\Z/)
+  end
+  
+  def squish
+    self.strip.gsub!(/\s+/, ' ')
+  end
+  
+  def indent(with = ' ' * 4)
+    self.gsub(/^/, with)
+  end
+end
+
+Hpricot::Text.class_eval do
+  def blank?() to_s.blank? end
 end

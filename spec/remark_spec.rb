@@ -48,6 +48,22 @@ describe Remark do
     HTML
   end
   
+  it "should strip excess whitespace" do
+    remark(<<-HTML).should == "Foo bar"
+      <p>
+        Foo
+        bar
+      </p>
+    HTML
+    
+    remark(<<-HTML).should == "Foo\n\nbar\n\nBaz"
+      <p>Foo</p>
+        
+           bar
+      <p>Baz</p>
+    HTML
+  end
+  
   it "should support lists" do
     remark(<<-HTML).should == "* foo\n* bar"
       <ul>
@@ -99,8 +115,9 @@ describe Remark do
   end
   
   it "should not have BR ruin all the fun" do
-    remark("<p>Foo<br>bar</p>").should == 'Foo bar'
-    remark("<p>Foo<br>\nbar <code>baz</code></p>").should == 'Foo bar `baz`'
+    remark("<p>Foo<br>bar</p>").should == "Foo  \nbar"
+    remark("<p>Foo<br>\nbar <code>baz</code></p>").should == "Foo  \nbar `baz`"
+    remark("<p>Foo</p><br><p>Bar</p>").should == "Foo\n\nBar"
   end
   
   it "should scope to the most likely element that holds content" do
