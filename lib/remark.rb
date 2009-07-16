@@ -81,14 +81,14 @@ class Remark
     when 'pre'
       elem.inner_text.indent
     when 'em'
-      "_#{elem.inner_text}_"
+      "_#{remark_inline(elem)}_"
     when 'strong'
-      "**#{elem.inner_text}**"
+      "**#{remark_inline(elem)}**"
     when 'code'
       code = elem.inner_text
       code.index('`') ? "`` #{code} ``" : "`#{code}`"
     when 'a'
-      remark_link(elem.inner_html, elem.attributes['href'], elem.attributes['title'])
+      remark_link(remark_inline(elem), elem.attributes['href'], elem.attributes['title'])
     when 'img'
       '!' + remark_link(elem.attributes['alt'], elem.attributes['src'], elem.attributes['title'])
     when 'blockquote'

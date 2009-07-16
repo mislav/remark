@@ -110,6 +110,11 @@ describe Remark do
     remark("<p>Or HTML <code>&lt;tags&gt;</code></p>").should == "Or HTML `<tags>`"
   end
   
+  it "should handle nested inline elements" do
+    remark("<p>I <strong>love <code>code</code></strong></p>").should == "I **love `code`**"
+    remark("<p>I <a href='#'>am <em>fine</em></a></p>").should == "I [am _fine_](#)"
+  end
+  
   it "should support hyperlinks" do
     remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
       "Click [here](http://mislav.uniqpath.com)"
