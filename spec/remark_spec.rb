@@ -143,25 +143,35 @@ describe Remark do
     remark("<p>Foo</p><br><p>Bar</p>").should == "Foo\n\nBar"
   end
   
-  it "should scope to the most likely element that holds content" do
-    remark(<<-HTML).should == "Wow, 3 paragraphs\n\nThis must be where the content is\n\nI'm sure"
-      <html>
-        <body>
-          <div id="div1">
-            <p>Only 1 paragraph</p>
-          </div>
-          <div id="div3">
-            <p>Wow, 3 paragraphs</p>
-            <p>This must be where the content is</p>
-            <p>I'm sure</p>
-          </div>
-          <div id="div2">
-            <p>Only 2 paragraphs</p>
-            <p>How disappointing</p>
-          </div>
-        </body>
-      </html>
-    HTML
+  describe "scoping" do
+    before do
+      @html = <<-HTML
+        <html>
+          <body>
+            <div id="div1">
+              <p>Only 1 paragraph</p>
+            </div>
+            <div id="div3">
+              <p>Wow, 3 paragraphs</p>
+              <p>This must be where the content is</p>
+              <p>I'm sure</p>
+            </div>
+            <div id="div2">
+              <p>Only 2 paragraphs</p>
+              <p>How disappointing</p>
+            </div>
+          </body>
+        </html>
+      HTML
+    end
+    
+    it "should scope to the most likely element that holds content" do
+      remark(@html).should == "Wow, 3 paragraphs\n\nThis must be where the content is\n\nI'm sure"
+    end
+    
+    it "should scope to the explicit scope" do
+      remark(@html, :scope => '#div2').should == "Only 2 paragraphs\n\nHow disappointing"
+    end
   end
 end
 

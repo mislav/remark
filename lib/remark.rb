@@ -12,7 +12,9 @@ class Remark
   end
   
   def scope
-    if body = @doc.at('/html/body')
+    if scope = @options[:scope]
+      @doc.at(scope)
+    elsif body = @doc.at('/html/body')
       candidates = (body / 'p').inject(Hash.new(0)) do |memo, para|
         memo[para.parent] += 1
         memo
