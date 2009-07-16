@@ -49,6 +49,10 @@ describe Remark do
     HTML
   end
   
+  it "should ignore DIVs when specified" do
+    remark("<p>Foo</p> <div><p>Bar</p><p>Baz</p></div>").should == "Foo\n\nBar\n\nBaz"
+  end
+  
   it "should strip excess whitespace" do
     remark(<<-HTML).should == "Foo bar"
       <p>
@@ -58,7 +62,7 @@ describe Remark do
     HTML
   end
   
-  it "should strip whitespace in text nodes between main content" do
+  it "should strip whitespace in text nodes between processed nodes" do
     pending
     remark(<<-HTML).should == "Foo\n\nbar\n\nBaz"
       <p>Foo</p>

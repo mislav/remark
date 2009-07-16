@@ -45,6 +45,8 @@ class Remark
   
   def valid_attributes?(elem)
     case elem.name
+    when 'div'
+      true
     when 'a'
       (elem.attributes.keys - %w(title)) == %w(href)
     when 'img'
@@ -52,6 +54,10 @@ class Remark
     else
       elem.attributes.empty?
     end
+  end
+  
+  def ignore_element?(elem)
+    IGNORE.include?(elem.name)
   end
   
   def remark_block(elem)
@@ -73,7 +79,7 @@ class Remark
     if item.text?
       item.to_s.gsub(/\n+/, ' ') unless item.blank?
     elsif item.elem?
-      if IGNORE.include?(item.name)
+      if ignore_element?(item)
         nil
       elsif valid_attributes?(item)
         remark_element(item)
@@ -85,6 +91,8 @@ class Remark
   
   def remark_element(elem)
     case elem.name
+    when 'div'
+      remark_children(elem)
     when 'p'
       remark_inline(elem)
     when /^h([1-6])$/
