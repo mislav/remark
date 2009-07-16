@@ -1,8 +1,9 @@
 require 'remark'
 
 describe Remark do
-  def remark(source)
-    described_class.new(source).to_markdown
+  def remark(source, options = {})
+    options = {:inline_links => true}.merge(options)
+    described_class.new(source, options).to_markdown
   end
   
   it "should let through text content" do
@@ -119,6 +120,11 @@ describe Remark do
     remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
       "Click [here](http://mislav.uniqpath.com)"
     remark("<a href='/foo' title='bar'>baz</a>").should == '[baz](/foo "bar")'
+  end
+  
+  it "should have reference-style hyperlinks" do
+    remark("<p>Click <a href='foo' title='mooslav'>here</a> and <a href='bar'>there</a></p>", :inline_links => false).should ==
+      "Click [here][1] and [there][2]\n\n[1]: foo  \"mooslav\"\n[2]: bar"
   end
   
   it "should support blockquotes" do

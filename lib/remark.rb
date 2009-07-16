@@ -1,12 +1,14 @@
 require 'hpricot'
 
 class Remark
-  def initialize(source)
+  def initialize(source, options = {})
     @doc = Hpricot(source)
+    @options = options
+    @links = []
   end
   
   def to_markdown
-    remark_block(scope)
+    remark_block(scope) + (inline_links?? '' : "\n\n" + output_reference_links)
   end
   
   def scope
@@ -20,6 +22,18 @@ class Remark
     else
       @doc
     end
+  end
+  
+  def inline_links?
+    @options[:inline_links]
+  end
+  
+  def output_reference_links
+    references = []
+    @links.each_with_index do |(href, title), i|
+      references << "[#{i + 1}]: #{href}#{title ? '  ' + title.inspect : ''}"
+    end
+    references.join("\n")
   end
   
   IGNORE = %w(script head style)
@@ -90,7 +104,7 @@ class Remark
     when 'a'
       remark_link(remark_inline(elem), elem.attributes['href'], elem.attributes['title'])
     when 'img'
-      '!' + remark_link(elem.attributes['alt'], elem.attributes['src'], elem.attributes['title'])
+      '!' + remark_link(elem.attributes['alt'], elem.attributes['src'], elem.attributes['title'], true)
     when 'blockquote'
       remark_children(elem).join("\n\n").indent('> ')
     when 'br'
@@ -100,9 +114,14 @@ class Remark
     end
   end
   
-  def remark_link(text, href, title = nil)
-    title_markup = title ? %( "#{title}") : ''
-    "[#{text}](#{href}#{title_markup})"
+  def remark_link(text, href, title = nil, inline = inline_links?)
+    if inline
+      title_markup = title ? %( "#{title}") : ''
+      "[#{text}](#{href}#{title_markup})"
+    else
+      @links << [href, title]
+      "[#{text}][#{@links.length}]"
+    end
   end
   
   def remark_inline(elem)
