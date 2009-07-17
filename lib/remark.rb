@@ -103,7 +103,7 @@ class Remark
       elem.children.any? { |e| e.elem? and BLOCK.include?(e.name) } ?
         remark_block(elem).indent : remark_inline(elem)
     when 'pre'
-      elem.inner_text.indent
+      elem.inner_text.rstrip.indent
     when 'em'
       "_#{remark_inline(elem)}_"
     when 'strong'

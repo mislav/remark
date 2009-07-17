@@ -100,6 +100,7 @@ describe Remark do
   it "should support preformatted blocks" do
     remark("<pre>def foo\n  bar\nend</pre>").should == "    def foo\n      bar\n    end"
     remark("<pre><code>def foo\n  &lt;bar&gt;\nend</code></pre>").should == "    def foo\n      <bar>\n    end"
+    remark("<pre>def foo\n</pre>").should == "    def foo"
   end
   
   it "should remark inline elements" do
