@@ -5,10 +5,13 @@ class Remark
     @doc = Hpricot(source)
     @options = options
     @links = []
+    @ignored_elements = nil
   end
   
   def to_markdown
-    remark_block(scope) + (inline_links?? '' : "\n\n\n" + output_reference_links)
+    parent = scope
+    collect_ignored_elements(parent)
+    remark_block(parent) + (inline_links?? '' : "\n\n\n" + output_reference_links)
   end
   
   def scope
@@ -57,7 +60,15 @@ class Remark
   end
   
   def ignore_element?(elem)
-    IGNORE.include?(elem.name)
+    IGNORE.include?(elem.name) or (@ignored_elements and @ignored_elements.include?(elem))
+  end
+  
+  def collect_ignored_elements(scope)
+    if @options[:ignores]
+      @ignored_elements = @options[:ignores].map do |expr|
+        scope.search(expr).to_a
+      end.flatten.uniq
+    end
   end
   
   def remark_block(elem)

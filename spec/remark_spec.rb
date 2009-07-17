@@ -150,6 +150,10 @@ describe Remark do
     remark("<p>Foo</p><br><p>Bar</p>").should == "Foo\n\nBar"
   end
   
+  it "should support ignores" do
+    remark("<p>Foo <span>bar</span> baz</p>", :ignores => ['span']).should == "Foo baz"
+  end
+  
   describe "scoping" do
     before do
       @html = <<-HTML

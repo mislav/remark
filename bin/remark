@@ -6,12 +6,16 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: remark [options] [FILE]"
 
-  opts.on("-i", "--inline-links", "Render link URLs inline (instead of reference-style)") do |inline|
+  opts.on("-n", "--inline-links", "Render link URLs inline (instead of reference-style)") do |inline|
     options[:inline_links] = inline
   end
   
   opts.on("-s", "--scope EXPR", "Scope to a spefic CSS/XPath expression in the HTML document") do |scope|
     options[:scope] = scope
+  end
+  
+  opts.on("-i", "--ignore EXPR", "Ignore elements that match CSS/XPath expression") do |expr|
+    (options[:ignores] ||= []) << expr
   end
 end.parse!
 
