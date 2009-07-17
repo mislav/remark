@@ -129,6 +129,8 @@ describe Remark do
   it "should have reference-style hyperlinks" do
     remark("<p>Click <a href='foo' title='mooslav'>here</a> and <a href='bar'>there</a></p>", :inline_links => false).should ==
       "Click [here][1] and [there][2]\n\n[1]: foo  \"mooslav\"\n[2]: bar"
+    remark("<p>Click <a href='foo'>here</a> and <a href='foo'>there</a></p>", :inline_links => false).should ==
+      "Click [here][1] and [there][1]\n\n[1]: foo"
   end
   
   it "should support blockquotes" do

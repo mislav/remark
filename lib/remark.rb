@@ -129,8 +129,13 @@ class Remark
       title_markup = title ? %( "#{title}") : ''
       "[#{text}](#{href}#{title_markup})"
     else
-      @links << [href, title]
-      "[#{text}][#{@links.length}]"
+      if existing = @links.find { |h, t| href == h }
+        num = @links.index(existing) + 1
+      else
+        @links << [href, title]
+        num = @links.length
+      end
+      "[#{text}][#{num}]"
     end
   end
   
