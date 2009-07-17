@@ -8,7 +8,7 @@ class Remark
   end
   
   def to_markdown
-    remark_block(scope) + (inline_links?? '' : "\n\n" + output_reference_links)
+    remark_block(scope) + (inline_links?? '' : "\n\n\n" + output_reference_links)
   end
   
   def scope
