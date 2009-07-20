@@ -54,56 +54,60 @@ describe Remark do
     remark("<div />").should == ""
   end
   
-  it "should strip excess whitespace" do
-    remark(<<-HTML).should == "Foo bar"
-      <p>
-        Foo
-        bar
-      </p>
-    HTML
-  end
+  describe "whitespace" do
+    it "should strip excess whitespace" do
+      remark(<<-HTML).should == "Foo bar"
+        <p>
+          Foo
+          bar
+        </p>
+      HTML
+    end
   
-  it "should strip whitespace in text nodes between processed nodes" do
-    pending
-    remark(<<-HTML).should == "Foo\n\nbar\n\nBaz"
-      <p>Foo</p>
+    it "should strip whitespace in text nodes between processed nodes" do
+      pending
+      remark(<<-HTML).should == "Foo\n\nbar\n\nBaz"
+        <p>Foo</p>
         
-           bar
-      <p>Baz</p>
-    HTML
+             bar
+        <p>Baz</p>
+      HTML
+    end
   end
   
-  it "should support lists" do
-    remark(<<-HTML).should == "* foo\n* bar"
-      <ul>
-        <li>foo</li>
-        <li>bar</li>
-      </ul>
-    HTML
+  describe "lists" do
+    it "should support lists" do
+      remark(<<-HTML).should == "* foo\n* bar"
+        <ul>
+          <li>foo</li>
+          <li>bar</li>
+        </ul>
+      HTML
     
-    remark(<<-HTML).should == "1. foo\n2. bar"
-      <ol>
-        <li>foo</li>
-        <li>bar</li>
-      </ol>
-    HTML
-  end
+      remark(<<-HTML).should == "1. foo\n2. bar"
+        <ol>
+          <li>foo</li>
+          <li>bar</li>
+        </ol>
+      HTML
+    end
   
-  it "should support lists with nested content" do
-    remark(<<-HTML).should == "*   foo\n    \n    bar\n\n*   baz"
-      <ul>
-        <li><p>foo</p><p>bar</p></li>
-        <li><p>baz</p></li>
-      </ul>
-    HTML
-  end
+    it "should support lists with nested content" do
+      remark(<<-HTML).should == "*   foo\n    \n    bar\n\n*   baz"
+        <ul>
+          <li><p>foo</p><p>bar</p></li>
+          <li><p>baz</p></li>
+        </ul>
+      HTML
+    end
   
-  it "should not break with malformed lists" do
-    remark(<<-HTML).should == "* <span>bar</span>"
-      <ul>
-        <span>bar</span>
-      </ul>
-    HTML
+    it "should not break with malformed lists" do
+      remark(<<-HTML).should == "* <span>bar</span>"
+        <ul>
+          <span>bar</span>
+        </ul>
+      HTML
+    end
   end
   
   it "should support preformatted blocks" do
@@ -112,51 +116,59 @@ describe Remark do
     remark("<pre>def foo\n</pre>").should == "    def foo"
   end
   
-  it "should remark inline elements" do
-    remark("<p>I'm so <strong>strong</strong></p>").should == "I'm so **strong**"
-    remark("<p>I'm so <em>emo</em></p>").should == "I'm so _emo_"
-    remark("<ul><li><em>Inline</em> stuff in <strong>lists</strong></li></ul>").should == "* _Inline_ stuff in **lists**"
-    remark("<h1>Headings <em>too</em></h1>").should == '# Headings _too_'
-  end
+  describe "inline" do
+    it "should remark inline elements" do
+      remark("<p>I'm so <strong>strong</strong></p>").should == "I'm so **strong**"
+      remark("<p>I'm so <em>emo</em></p>").should == "I'm so _emo_"
+      remark("<ul><li><em>Inline</em> stuff in <strong>lists</strong></li></ul>").should == "* _Inline_ stuff in **lists**"
+      remark("<h1>Headings <em>too</em></h1>").should == '# Headings _too_'
+    end
   
-  it "should remark inline code" do
-    remark("<p>Write more <code>code</code></p>").should == "Write more `code`"
-    remark("<p>Even with <code>`backticks`</code></p>").should == "Even with `` `backticks` ``"
-    remark("<p>Or HTML <code>&lt;tags&gt;</code></p>").should == "Or HTML `<tags>`"
-  end
+    it "should remark inline code" do
+      remark("<p>Write more <code>code</code></p>").should == "Write more `code`"
+      remark("<p>Even with <code>`backticks`</code></p>").should == "Even with `` `backticks` ``"
+      remark("<p>Or HTML <code>&lt;tags&gt;</code></p>").should == "Or HTML `<tags>`"
+    end
   
-  it "should handle nested inline elements" do
-    remark("<p>I <strong>love <code>code</code></strong></p>").should == "I **love `code`**"
-    remark("<p>I <a href='#'>am <em>fine</em></a></p>").should == "I [am _fine_](#)"
-  end
+    it "should handle nested inline elements" do
+      remark("<p>I <strong>love <code>code</code></strong></p>").should == "I **love `code`**"
+      remark("<p>I <a href='#'>am <em>fine</em></a></p>").should == "I [am _fine_](#)"
+    end
   
-  it "should support hyperlinks" do
-    remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
-      "Click [here](http://mislav.uniqpath.com)"
-    remark("<a href='/foo' title='bar'>baz</a>").should == '[baz](/foo "bar")'
-  end
+    it "should support hyperlinks" do
+      remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
+        "Click [here](http://mislav.uniqpath.com)"
+      remark("<a href='/foo' title='bar'>baz</a>").should == '[baz](/foo "bar")'
+    end
   
-  it "should have reference-style hyperlinks" do
-    remark("<p>Click <a href='foo' title='mooslav'>here</a> and <a href='bar'>there</a></p>", :inline_links => false).should ==
-      "Click [here][1] and [there][2]\n\n\n[1]: foo  \"mooslav\"\n[2]: bar"
-    remark("<p>Click <a href='foo'>here</a> and <a href='foo'>there</a></p>", :inline_links => false).should ==
-      "Click [here][1] and [there][1]\n\n\n[1]: foo"
+    it "should have reference-style hyperlinks" do
+      remark("<p>Click <a href='foo' title='mooslav'>here</a> and <a href='bar'>there</a></p>", :inline_links => false).should ==
+        "Click [here][1] and [there][2]\n\n\n[1]: foo  \"mooslav\"\n[2]: bar"
+      remark("<p>Click <a href='foo'>here</a> and <a href='foo'>there</a></p>", :inline_links => false).should ==
+        "Click [here][1] and [there][1]\n\n\n[1]: foo"
+    end
+  
+    it "should support image tags" do
+      remark("<img src='moo.jpg' alt='cow'>").should == '![cow](moo.jpg)'
+      remark("<img src='moo.jpg' alt='cow' width='16'>").should == '<img src="moo.jpg" alt="cow" width="16" />'
+    end
+  
+    it "should not have BR ruin all the fun" do
+      remark("<p>Foo<br>bar</p>").should == "Foo  \nbar"
+      remark("<p>Foo<br>\nbar <code>baz</code></p>").should == "Foo  \nbar `baz`"
+      remark("<p>Foo</p><br><p>Bar</p>").should == "Foo\n\nBar"
+    end
+    
+    it "should properly space out adjacent inline elements" do
+      pending
+      remark("<p><code>a</code> <strong>b</strong></p>").should == "`a` **b**"
+      remark("<p><code>a</code><strong>b</strong></p>").should == "`a`**b**"
+    end
   end
   
   it "should support blockquotes" do
     remark("<blockquote>Cogito, ergo sum</blockquote>").should == '> Cogito, ergo sum'
     remark("<blockquote><p>I think</p><p>therefore I am</p></blockquote>").should == "> I think\n> \n> therefore I am"
-  end
-  
-  it "should support image tags" do
-    remark("<img src='moo.jpg' alt='cow'>").should == '![cow](moo.jpg)'
-    remark("<img src='moo.jpg' alt='cow' width='16'>").should == '<img src="moo.jpg" alt="cow" width="16" />'
-  end
-  
-  it "should not have BR ruin all the fun" do
-    remark("<p>Foo<br>bar</p>").should == "Foo  \nbar"
-    remark("<p>Foo<br>\nbar <code>baz</code></p>").should == "Foo  \nbar `baz`"
-    remark("<p>Foo</p><br><p>Bar</p>").should == "Foo\n\nBar"
   end
   
   it "should support ignores" do
