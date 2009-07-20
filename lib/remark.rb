@@ -160,6 +160,7 @@ class Remark
     nested = false
     
     items = remark_children(list).map do |item|
+      item = item.to_s
       current = unordered ? marker : "#{marker += 1}."
       if item =~ /\A\s/
         nested = true

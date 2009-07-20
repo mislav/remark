@@ -98,6 +98,14 @@ describe Remark do
     HTML
   end
   
+  it "should not break with malformed lists" do
+    remark(<<-HTML).should == "* <span>bar</span>"
+      <ul>
+        <span>bar</span>
+      </ul>
+    HTML
+  end
+  
   it "should support preformatted blocks" do
     remark("<pre>def foo\n  bar\nend</pre>").should == "    def foo\n      bar\n    end"
     remark("<pre><code>def foo\n  &lt;bar&gt;\nend</code></pre>").should == "    def foo\n      <bar>\n    end"
