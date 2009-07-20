@@ -82,7 +82,7 @@ class Remark
     node.children.each do |item|
       result = remark_item(item)
       remarked << result if result
-    end
+    end if node.children
     remarked
   end
   

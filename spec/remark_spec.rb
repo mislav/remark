@@ -49,8 +49,9 @@ describe Remark do
     HTML
   end
   
-  it "should ignore DIVs when specified" do
+  it "should ignore DIVs" do
     remark("<p>Foo</p> <div><p>Bar</p><p>Baz</p></div>").should == "Foo\n\nBar\n\nBaz"
+    remark("<div />").should == ""
   end
   
   it "should strip excess whitespace" do
