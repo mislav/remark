@@ -135,19 +135,6 @@ describe Remark do
       remark("<p>I <a href='#'>am <em>fine</em></a></p>").should == "I [am _fine_](#)"
     end
   
-    it "should support hyperlinks" do
-      remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
-        "Click [here](http://mislav.uniqpath.com)"
-      remark("<a href='/foo' title='bar'>baz</a>").should == '[baz](/foo "bar")'
-    end
-  
-    it "should have reference-style hyperlinks" do
-      remark("<p>Click <a href='foo' title='mooslav'>here</a> and <a href='bar'>there</a></p>", :inline_links => false).should ==
-        "Click [here][1] and [there][2]\n\n\n[1]: foo  \"mooslav\"\n[2]: bar"
-      remark("<p>Click <a href='foo'>here</a> and <a href='foo'>there</a></p>", :inline_links => false).should ==
-        "Click [here][1] and [there][1]\n\n\n[1]: foo"
-    end
-  
     it "should support image tags" do
       remark("<img src='moo.jpg' alt='cow'>").should == '![cow](moo.jpg)'
       remark("<img src='moo.jpg' alt='cow' width='16'>").should == '<img src="moo.jpg" alt="cow" width="16" />'
@@ -163,6 +150,22 @@ describe Remark do
       pending
       remark("<p><code>a</code> <strong>b</strong></p>").should == "`a` **b**"
       remark("<p><code>a</code><strong>b</strong></p>").should == "`a`**b**"
+    end
+  end
+  
+  describe "hyperlinks" do
+    it "should support hyperlinks" do
+      remark("<p>Click <a href='http://mislav.uniqpath.com'>here</a></p>").should ==
+        "Click [here](http://mislav.uniqpath.com)"
+      remark("<a href='/foo' title='bar'>baz</a>").should == '[baz](/foo "bar")'
+    end
+  
+    it "should have reference-style hyperlinks" do
+      remark("<p>Click <a href='foo' title='mooslav'>here</a> and <a href='bar'>there</a></p>", :inline_links => false).should ==
+        "Click [here][1] and [there][2]\n\n\n[1]: foo  \"mooslav\"\n[2]: bar"
+      remark("<p>Click <a href='foo'>here</a> and <a href='foo'>there</a></p>", :inline_links => false).should ==
+        "Click [here][1] and [there][1]\n\n\n[1]: foo"
+      remark("", :inline_links => false).should == ""
     end
   end
   

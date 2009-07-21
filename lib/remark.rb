@@ -11,7 +11,7 @@ class Remark
   def to_markdown
     parent = scope
     collect_ignored_elements(parent)
-    remark_block(parent) + (inline_links?? '' : "\n\n\n" + output_reference_links)
+    remark_block(parent) + (inline_links? || @links.empty?? '' : "\n\n\n" + output_reference_links)
   end
   
   def scope
