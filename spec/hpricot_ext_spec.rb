@@ -32,10 +32,13 @@ describe Hpricot, "remark extensions" do
             Some famous quote
             <blockquote>Nested famous quote</blockquote>
           </blockquote>
-          <div class="code"><pre>def preformatted
+          <div class="code">
+            <p>Sample code:</p>
+            <pre>def preformatted
   text
 end
-          </pre></div>
+            </pre>
+          </div>
           <img src='moo.jpg' alt='cow'>
           <img src='moo.jpg' alt='cow' width='16'>
           
@@ -63,6 +66,10 @@ end
   
   def remark(elem, options = {})
     (String === elem ? @doc.at(elem) : elem).to_markdown(options)
+  end
+  
+  it "should return empty string for empty document" do
+    remark(Hpricot('')).should == ''
   end
   
   it "should ignore DOCTYPE, HEAD and XML processing instructions" do
@@ -102,7 +109,7 @@ end
   end
   
   it "should support preformatted text" do
-    remark('div.code').should == "    def preformatted\n      text\n    end"
+    remark('div.code').should == "Sample code:\n\n    def preformatted\n      text\n    end"
   end
   
   it "should support image tags" do

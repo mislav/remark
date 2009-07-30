@@ -2,7 +2,7 @@ require 'remark'
 
 describe Remark do
   def remark(source, options = {})
-    options = {:inline_links => true}.merge(options)
+    options = {:reference_links => false}.merge(options)
     described_class.new(source, options).to_markdown
   end
   
@@ -75,8 +75,8 @@ describe Remark do
       HTML
     end
   
-    it "should not break with malformed lists" do
-      remark(<<-HTML).should == "* <span>bar</span>"
+    it "should output malformed lists as HTML" do
+      remark(<<-HTML).should == "<ul>\n          <span>bar</span>\n        </ul>"
         <ul>
           <span>bar</span>
         </ul>
@@ -112,11 +112,11 @@ describe Remark do
     end
   
     it "should have reference-style hyperlinks" do
-      remark("<p>Click <a href='foo' title='mooslav'>here</a> and <a href='bar'>there</a></p>", :inline_links => false).should ==
+      remark("<p>Click <a href='foo' title='mooslav'>here</a> and <a href='bar'>there</a></p>", :reference_links => true).should ==
         "Click [here][1] and [there][2]\n\n\n[1]: foo  \"mooslav\"\n[2]: bar"
-      remark("<p>Click <a href='foo'>here</a> and <a href='foo'>there</a></p>", :inline_links => false).should ==
+      remark("<p>Click <a href='foo'>here</a> and <a href='foo'>there</a></p>", :reference_links => true).should ==
         "Click [here][1] and [there][1]\n\n\n[1]: foo"
-      remark("", :inline_links => false).should == ""
+      remark("", :reference_links => true).should == ""
     end
   end
   

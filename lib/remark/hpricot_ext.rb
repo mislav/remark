@@ -19,6 +19,7 @@ end
 # elements that have children
 Hpricot::Container.module_eval do
   def to_markdown(options = {})
+    return '' unless self.children
     previous_was_block = false
     parent_is_block = self.markdown_block?
     
@@ -38,13 +39,17 @@ Hpricot::Container.module_eval do
           all << "\n\n" if all.any?
         end
         
-        # strip whitespace from the left if ...
-        child_content.lstrip! if previous_was_block or # we're adjacent to a block
-          (parent_is_block and child == self.children.first and child.name != 'pre') or # this is the first child
-          (not all.empty? and all.last =~ /  \n/) # we're following the forced line break token
+        unless 'pre' == child.name
+          # strip whitespace from the left if ...
+          child_content.lstrip! if previous_was_block or # we're adjacent to a block
+            (parent_is_block and child == self.children.first) or # this is the first child
+            (not all.empty? and all.last =~ / ( \n)?$/) # we're following a space or a forced line break token
           
-        # strip whitespace from the right if this is the last node in a block
-        child_content.rstrip! if parent_is_block and self.children.last == child
+          
+          # strip whitespace from the right if this is the last node in a block
+          child_content.rstrip! if parent_is_block and self.children.last == child
+        end
+        
         all << child_content
       end
       
@@ -73,7 +78,7 @@ Hpricot::Elem.module_eval do
   HTML_BLOCK = MARKDOWN_BLOCK + %w(ul ol dl div noscript form table address fieldset)
   
   def to_markdown(options = {})
-    return nil if markdown_ignored?
+    return nil if markdown_ignored?(options)
     return '' if markdown_empty?
     return to_s unless markdown_supported_attributes?
 
@@ -100,9 +105,9 @@ Hpricot::Elem.module_eval do
       code = inner_text
       code.index('`') ? "`` #{code} ``" : "`#{code}`"
     when 'a'
-      remark_link(super, attributes['href'], attributes['title'])
+      remark_link(super, attributes['href'], attributes['title'], options)
     when 'img'
-      '!' + remark_link(attributes['alt'], attributes['src'], attributes['title'], true)
+      '!' + remark_link(attributes['alt'], attributes['src'], attributes['title'], :reference_links => false)
     when 'blockquote'
       super.indent('> ')
     when 'br'
@@ -142,8 +147,9 @@ Hpricot::Elem.module_eval do
   
   protected
   
-  def markdown_ignored?
-    IGNORE.include?(name)
+  def markdown_ignored?(options)
+    IGNORE.include?(name) or
+      (options[:ignored_elements] and options[:ignored_elements].include?(self))
   end
   
   def markdown_empty?
@@ -173,18 +179,18 @@ Hpricot::Elem.module_eval do
     names == Array(only)
   end
   
-  def remark_link(text, href, title = nil, inline = true)
-    if inline
-      title_markup = title ? %( "#{title}") : ''
-      "[#{text}](#{href}#{title_markup})"
-    else
-      if existing = @links.find { |h, t| href == h }
-        num = @links.index(existing) + 1
+  def remark_link(text, href, title = nil, options = {})
+    if options[:reference_links]
+      if existing = options[:links].find { |h, t| href == h }
+        num = options[:links].index(existing) + 1
       else
-        @links << [href, title]
-        num = @links.length
+        options[:links] << [href, title]
+        num = options[:links].length
       end
       "[#{text}][#{num}]"
+    else
+      title_markup = title ? %( "#{title}") : ''
+      "[#{text}](#{href}#{title_markup})"
     end
   end
 end

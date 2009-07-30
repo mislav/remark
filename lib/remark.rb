@@ -1,18 +1,21 @@
 require 'remark/hpricot_ext'
 
 class Remark
+  DEFAULT_OPTIONS = { :reference_links => true }
+  
   def initialize(source, options = {})
     @doc = Hpricot(source)
-    @options = options
+    @options = DEFAULT_OPTIONS.merge options
     @links = []
     @ignored_elements = nil
   end
   
   def to_markdown
     parent = scope
-    return parent.to_markdown(@options)
     collect_ignored_elements(parent)
-    remark_block(parent) + (inline_links? || @links.empty?? '' : "\n\n\n" + output_reference_links)
+    links = @options[:links] = [] unless inline_links?
+    result = parent.to_markdown(@options)
+    result + (inline_links? || links.empty?? '' : "\n\n\n" + output_reference_links(links))
   end
   
   def scope
@@ -31,12 +34,12 @@ class Remark
   end
   
   def inline_links?
-    @options[:inline_links]
+    !@options[:reference_links]
   end
   
-  def output_reference_links
+  def output_reference_links(links)
     references = []
-    @links.each_with_index do |(href, title), i|
+    links.each_with_index do |(href, title), i|
       references << "[#{i + 1}]: #{href}#{title ? '  ' + title.inspect : ''}"
     end
     references.join("\n")
@@ -50,7 +53,7 @@ class Remark
   
   def collect_ignored_elements(scope)
     if @options[:ignores]
-      @ignored_elements = @options[:ignores].map do |expr|
+      @options[:ignored_elements] = @options[:ignores].map do |expr|
         scope.search(expr).to_a
       end.flatten.uniq
     end
