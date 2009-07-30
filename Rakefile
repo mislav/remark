@@ -7,13 +7,14 @@ desc "generates .gemspec file"
 task :gemspec do
   spec = Gem::Specification.new do |gem|
     gem.name = "remark"
+    gem.version = '0.3.0'
+    
     gem.summary = "HTML to Markdown converter"
     gem.email = "mislav.marohnic@gmail.com"
     gem.homepage = "http://github.com/mislav/remark"
     gem.authors = ["Mislav Marohnić"]
     gem.has_rdoc = false
     
-    gem.version = '0.2.1'
     gem.files = FileList['Rakefile', '{bin,lib,rails,spec}/**/*', 'README*', 'LICENSE*'] & `git ls-files`.split("\n")
     gem.executables = Dir['bin/*'].map { |f| File.basename(f) }
   end
