@@ -11,17 +11,6 @@ describe Remark do
     remark("Foo bar\nbaz").should == 'Foo bar baz'
   end
   
-  it "should split paragraphs with an empty line" do
-    remark("<p>Foo bar</p>").should == 'Foo bar'
-    remark("<p>Foo bar</p><p>baz").should == "Foo bar\n\nbaz"
-    remark("<p>Foo bar</p>baz").should == "Foo bar\n\nbaz"
-  end
-  
-  it "should output title syntax" do
-    remark("<h1>Foo bar</h1>").should == '# Foo bar'
-    remark("<h2>Foo bar</h2>").should == '## Foo bar'
-  end
-  
   it "should preserve elements in remarked blocks" do
     remark("<p>Foo <ins>bar</ins></p>").should == 'Foo <ins>bar</ins>'
     remark("<h2>Foo <ins>bar</ins></h2>").should == '## Foo <ins>bar</ins>'
@@ -32,26 +21,12 @@ describe Remark do
     remark("<p>If you&#8217;re doing all your development on the &#8220;master&#8221; branch, you&#8217;re not using git").should == "If you’re doing all your development on the “master” branch, you’re not using git"
   end
   
-  it "should ignore tags without user-facing content" do
-    remark("<script>foo</script>").should == ''
-    remark("<head>foo</head>").should == ''
-  end
-  
-  it "should leave known elements with attributes intact" do
-    remark("<p class='notice'>Kittens attack!</p>").should == '<p class="notice">Kittens attack!</p>'
-  end
-  
   it "should leave unknown elements intact" do
     remark(<<-HTML).should == "Foo\n\n<table>data</table>\n\nBar"
       <p>Foo</p>
       <table>data</table>
       <p>Bar</p>
     HTML
-  end
-  
-  it "should ignore DIVs" do
-    remark("<p>Foo</p> <div><p>Bar</p><p>Baz</p></div>").should == "Foo\n\nBar\n\nBaz"
-    remark("<div />").should == ""
   end
   
   describe "whitespace" do
@@ -65,7 +40,6 @@ describe Remark do
     end
   
     it "should strip whitespace in text nodes between processed nodes" do
-      pending
       remark(<<-HTML).should == "Foo\n\nbar\n\nBaz"
         <p>Foo</p>
         
@@ -124,32 +98,9 @@ describe Remark do
       remark("<h1>Headings <em>too</em></h1>").should == '# Headings _too_'
     end
   
-    it "should remark inline code" do
-      remark("<p>Write more <code>code</code></p>").should == "Write more `code`"
-      remark("<p>Even with <code>`backticks`</code></p>").should == "Even with `` `backticks` ``"
-      remark("<p>Or HTML <code>&lt;tags&gt;</code></p>").should == "Or HTML `<tags>`"
-    end
-  
     it "should handle nested inline elements" do
       remark("<p>I <strong>love <code>code</code></strong></p>").should == "I **love `code`**"
       remark("<p>I <a href='#'>am <em>fine</em></a></p>").should == "I [am _fine_](#)"
-    end
-  
-    it "should support image tags" do
-      remark("<img src='moo.jpg' alt='cow'>").should == '![cow](moo.jpg)'
-      remark("<img src='moo.jpg' alt='cow' width='16'>").should == '<img src="moo.jpg" alt="cow" width="16" />'
-    end
-  
-    it "should not have BR ruin all the fun" do
-      remark("<p>Foo<br>bar</p>").should == "Foo  \nbar"
-      remark("<p>Foo<br>\nbar <code>baz</code></p>").should == "Foo  \nbar `baz`"
-      remark("<p>Foo</p><br><p>Bar</p>").should == "Foo\n\nBar"
-    end
-    
-    it "should properly space out adjacent inline elements" do
-      pending
-      remark("<p><code>a</code> <strong>b</strong></p>").should == "`a` **b**"
-      remark("<p><code>a</code><strong>b</strong></p>").should == "`a`**b**"
     end
   end
   
@@ -167,11 +118,6 @@ describe Remark do
         "Click [here][1] and [there][1]\n\n\n[1]: foo"
       remark("", :inline_links => false).should == ""
     end
-  end
-  
-  it "should support blockquotes" do
-    remark("<blockquote>Cogito, ergo sum</blockquote>").should == '> Cogito, ergo sum'
-    remark("<blockquote><p>I think</p><p>therefore I am</p></blockquote>").should == "> I think\n> \n> therefore I am"
   end
   
   it "should support ignores" do
@@ -209,4 +155,3 @@ describe Remark do
     end
   end
 end
-
