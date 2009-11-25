@@ -3,6 +3,8 @@ Remark — HTML→Markdown tool
 
 <i>Remark</i> parses HTML and delivers proper Markdown.
 
+    $ [sudo] gem install remark
+
 Usage
 -----
 
