@@ -105,9 +105,9 @@ Hpricot::Elem.module_eval do
       code = inner_text
       code.index('`') ? "`` #{code} ``" : "`#{code}`"
     when 'a'
-      remark_link(super, attributes['href'], attributes['title'], options)
+      remark_link(super, self['href'], self['title'], options)
     when 'img'
-      '!' + remark_link(attributes['alt'], attributes['src'], attributes['title'], :reference_links => false)
+      '!' + remark_link(self['alt'], self['src'], self['title'], :reference_links => false)
     when 'blockquote'
       super.indent('> ')
     when 'br'
@@ -191,6 +191,22 @@ Hpricot::Elem.module_eval do
     else
       title_markup = title ? %( "#{title}") : ''
       "[#{text}](#{href}#{title_markup})"
+    end
+  end
+end
+
+Hpricot::Attributes.class_eval do
+  methods = instance_methods.map { |m| m.to_sym }
+  
+  unless methods.include? :empty?
+    def empty?
+      self.to_hash.empty?
+    end
+  end
+  
+  unless methods.include? :keys
+    def keys
+      self.to_hash.keys
     end
   end
 end
