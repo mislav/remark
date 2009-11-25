@@ -1,28 +1,21 @@
-# -*- encoding: utf-8 -*-
-
 Gem::Specification.new do |s|
-  s.name = %q{remark}
-  s.version = "0.3.0"
-
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Mislav Marohni\304\207"]
-  s.date = %q{2009-07-30}
-  s.default_executable = %q{remark}
-  s.email = %q{mislav.marohnic@gmail.com}
-  s.executables = ["remark"]
-  s.files = ["Rakefile", "bin/remark", "lib/remark/core_ext.rb", "lib/remark/hpricot_ext.rb", "lib/remark.rb", "spec/hpricot_ext_spec.rb", "spec/remark_spec.rb", "spec/sample.html", "README.markdown"]
-  s.homepage = %q{http://github.com/mislav/remark}
-  s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
-  s.summary = %q{HTML to Markdown converter}
-
-  if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
-    s.specification_version = 3
-
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-    else
-    end
-  else
-  end
+  s.name    = 'remark'
+  s.version = '0.3.1'
+  s.date    = Date.today.to_s
+  
+  s.add_dependency 'hpricot', '~> 0.8.2'
+  s.add_development_dependency 'rspec', '~> 1.2.9'
+  
+  s.summary = "HTML to Markdown converter"
+  s.description = "Remark turns simple HTML documents or content in web pages to Markdown source."
+  
+  s.authors  = ['Mislav Marohnić']
+  s.email    = 'mislav.marohnic@gmail.com'
+  s.homepage = 'http://github.com/mislav/remark'
+  
+  s.has_rdoc = false
+  # s.rdoc_options = ['--main', 'README.rdoc', '--charset=UTF-8']
+  # s.extra_rdoc_files = ['README.rdoc', 'LICENSE', 'CHANGELOG.rdoc']
+  
+  s.files = Dir['Rakefile', '{bin,lib,rails,test,spec}/**/*', 'README*', 'LICENSE*'] & `git ls-files`.split("\n")
 end
