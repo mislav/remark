@@ -50,7 +50,9 @@ end
             bar <code>baz</code></p>
             <p>Foo</p><br><br><p>Bar</p><br>
           </div>
-          
+
+          <hr>
+
           <ul>
             <li>First</li>
             <li>Second</li>
@@ -133,6 +135,10 @@ end
   
   it "should support ordered list" do
     remark('ol').should == "1. First\n2. Second"
+  end
+
+  it "renders horizontal rule" do
+    remark('hr').should == "* * *"
   end
 end
 

@@ -112,6 +112,8 @@ Hpricot::Elem.module_eval do
       super.indent('> ')
     when 'br'
       "  \n" + inner_html
+    when 'hr'
+      '* * *'
     else
       to_s
     end
