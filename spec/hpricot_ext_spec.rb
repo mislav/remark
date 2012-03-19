@@ -1,3 +1,5 @@
+# encoding: utf-8
+require 'rspec'
 require 'remark/hpricot_ext'
 
 describe Hpricot, "remark extensions" do

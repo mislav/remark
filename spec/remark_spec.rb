@@ -1,3 +1,5 @@
+# encoding: utf-8
+require 'rspec'
 require 'remark'
 
 describe Remark do
