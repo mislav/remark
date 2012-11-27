@@ -105,7 +105,13 @@ Hpricot::Elem.module_eval do
       code = inner_text
       code.index('`') ? "`` #{code} ``" : "`#{code}`"
     when 'a'
-      remark_link(super, self['href'], self['title'], options)
+      if self['name']
+        text = super
+        text = '' if text.blank?
+        %(<a name="#{self['name']}">#{text}</a>)
+      else
+        remark_link(super, self['href'], self['title'], options)
+      end
     when 'img'
       '!' + remark_link(self['alt'], self['src'], self['title'], :reference_links => false)
     when 'blockquote'
@@ -163,7 +169,8 @@ Hpricot::Elem.module_eval do
     when 'div', 'body'
       true
     when 'a'
-      attribute_names_match?('href', 'title')
+      attribute_names_match?('href', 'title') or
+        attribute_names_match?('name')
     when 'img'
       attribute_names_match?(%w(alt src), 'title')
     when 'ol', 'ul'
