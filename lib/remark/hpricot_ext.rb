@@ -51,9 +51,9 @@ Hpricot::Container.module_eval do
         end
         
         all << child_content
+        previous_was_block = current_is_block
       end
       
-      previous_was_block = current_is_block
       all
     end
     
@@ -83,7 +83,7 @@ Hpricot::Elem.module_eval do
     return to_s unless markdown_supported_attributes?
 
     case name
-    when 'div', 'noscript'
+    when 'div', 'noscript', 'body'
       super
     when 'p'
       super
@@ -160,7 +160,7 @@ Hpricot::Elem.module_eval do
   
   def markdown_supported_attributes?
     case name
-    when 'div'
+    when 'div', 'body'
       true
     when 'a'
       attribute_names_match?('href', 'title')
