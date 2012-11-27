@@ -41,6 +41,7 @@ describe Hpricot, "remark extensions" do
 end
             </pre>
           </div>
+          <img src='moo.jpg'>
           <img src='moo.jpg' alt='cow'>
           <img src='moo.jpg' alt='cow' width='16'>
           
@@ -117,6 +118,7 @@ end
   end
   
   it "should support image tags" do
+    remark('img').should == '![](moo.jpg)'
     remark('img[@alt]').should == '![cow](moo.jpg)'
     remark('img[@width]').should == '<img src="moo.jpg" alt="cow" width="16" />'
   end

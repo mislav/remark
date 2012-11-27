@@ -172,7 +172,7 @@ Hpricot::Elem.module_eval do
       attribute_names_match?('href', 'title') or
         attribute_names_match?('name')
     when 'img'
-      attribute_names_match?(%w(alt src), 'title')
+      attribute_names_match?('src', %w(alt title))
     when 'ol', 'ul'
       attributes.empty? and children.all? do |item|
         not item.elem? or (item.name == 'li' and item.attributes.empty?)
