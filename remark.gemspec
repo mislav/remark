@@ -1,6 +1,7 @@
+# encoding: utf-8
 Gem::Specification.new do |s|
   s.name    = 'remark'
-  s.version = '0.3.1'
+  s.version = '0.3.2'
 
   s.add_dependency 'hpricot', '~> 0.8.2'
   s.add_development_dependency 'rspec', '~> 2.9'
